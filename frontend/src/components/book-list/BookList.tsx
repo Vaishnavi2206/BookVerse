@@ -1,25 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Grid,
-  type GridImperativeAPI,
-} from "react-window";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Grid } from "react-window";
 import "./BookList.css";
 import Search from "../search/Search";
 import { useAuth } from "../../context/AuthContext";
-import {
-  useLibraryState
-} from "../../shared/library-state";
-import type { Book, BookView, ListTab, CollectionTab, BookResponse, BookGridCellProps, RequestCursor }
-  from "./book-types";
-import {isBook, getCacheKey, readCachedBooks, getFavouriteBooks, DEFAULT_QUERY}
-from "./book-list.utlis";
+import { useLibraryState } from "../../shared/library-state";
+import type { ListTab, CollectionTab } from "./book-types";
 import BookGridCell from "./components/BookGrid";
 import CollectionCard from "./components/CollectionCard";
-import { useCollection } from './hooks/useCollection';
-import CollectionList from './components/CollectionList';
-
-const PAGE_SIZE = 10;
+import { useCollection } from "./hooks/useCollection";
+import CollectionList from "./components/CollectionList";
+import { useBookFeed } from "./hooks/useBookFeed";
 
 const BookList = ({
   category,
@@ -30,42 +20,10 @@ const BookList = ({
 }) => {
   const { uiUser } = useAuth();
   const libraryState = useLibraryState(uiUser?.userId);
-  const [initialBooks] = useState(() => readCachedBooks(DEFAULT_QUERY));
-  const navigate = useNavigate();
-  const [listTab, setListTab] = useState<ListTab>("books");
-  const [bookView, setBookView] = useState<BookView>("all");
-  const [collectionTab, setCollectionTab] = useState<CollectionTab>("mine");
-
-  const [books, setBooks] = useState<Book[]>(initialBooks ?? []);
-  const initialHasMore =
-    initialBooks === null || initialBooks.length % PAGE_SIZE === 0;
-  const [favouriteBooks] = useState<Book[]>(() => {
-    return getFavouriteBooks();
-  });
-  const [hasMore, setHasMore] = useState(initialHasMore);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [columns, setColumns] = useState(5);
-  const [gridHeight, setGridHeight] = useState(600);
-  const [listElement, setListElement] = useState<HTMLDivElement | null>(null);
-  const [gridElement, setGridElement] = useState<HTMLDivElement | null>(null);
-  const [headerElement, setHeaderElement] = useState<HTMLElement | null>(null);
-  const gridRef = useRef<GridImperativeAPI>(null);
-  const booksRef = useRef(books);
-  const favouritesRef = useRef(favouriteBooks);
-  const requestRef = useRef<RequestCursor>({
-    query: DEFAULT_QUERY,
-    nextPage: initialBooks
-      ? Math.floor(initialBooks.length / PAGE_SIZE) + 1
-      : 1,
-    hasMore: initialHasMore,
-    loading: false,
-    requestId: 0,
-  });
   const {
     activeCollection,
-    collectionBooks,
     browseCollections,
+    collectionBooks,
     savedCollectionCards,
     userCollections,
     selectedCollectionBook,
@@ -80,178 +38,28 @@ const BookList = ({
     likingCollectionId,
   } = useCollection();
 
-  const updateGridDimensions = useCallback(() => {
-    if (!listElement || !scrollElement) {
-      return;
-    }
-
-    const width = listElement.clientWidth;
-    setColumns(Math.max(1, Math.floor(width / 205)));
-    const availableHeight =
-      scrollElement.clientHeight -
-      (headerElement?.offsetHeight ?? 0) -
-      48;
-    setGridHeight(Math.max(2, availableHeight));
-  }, [headerElement, listElement, scrollElement]);
-
-  useEffect(() => {
-    if (!listElement || !scrollElement) {
-      return;
-    }
-
-    const observer = new ResizeObserver(() => {
-      updateGridDimensions();
-    });
-    observer.observe(listElement);
-    observer.observe(scrollElement);
-    if (headerElement) observer.observe(headerElement);
-    return () => observer.disconnect();
-  }, [headerElement, listElement, scrollElement, updateGridDimensions]);
-
-  const setGridRef = useCallback((api: GridImperativeAPI | null) => {
-    gridRef.current = api;
-    setGridElement(api?.element ?? null);
-  }, []);
-
-  const loadNextPage = useCallback(async () => {
-    const cursor = requestRef.current;
-    if (cursor == null || cursor.loading || !cursor.hasMore) {
-      return;
-    }
-
-    cursor.loading = true;
-    const requestId = cursor.requestId;
-    const page = cursor.nextPage;
-    const requestedQuery = cursor.query;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(
-        `https://openlibrary.org/search.json?q=${encodeURIComponent(requestedQuery)}&page=${page}&limit=${PAGE_SIZE}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Book search failed (${response.status}).`);
-      }
-
-      const data: BookResponse = await response.json();
-      if (requestRef.current.requestId !== requestId) {
-        return;
-      }
-
-      const favouriteKeys = new Set(favouritesRef.current.map((book) => book.key));
-      const results = (data.docs ?? [])
-        .filter(isBook)
-        .map((book) => ({ ...book, favourite: favouriteKeys.has(book.key) }));
-      const nextBooks =
-        page === 1 ? results : [...booksRef.current, ...results];
-      booksRef.current = nextBooks;
-      setBooks(nextBooks);
-
-      try {
-        const serializedBooks = JSON.stringify(nextBooks);
-        localStorage.setItem(getCacheKey(requestedQuery), serializedBooks);
-        if (requestedQuery === DEFAULT_QUERY) {
-          localStorage.setItem("bookList", serializedBooks);
-        }
-      } catch (storageError) {
-        setError(
-          storageError instanceof Error
-            ? `Books loaded, but could not be saved locally: ${storageError.message}`
-            : "Books loaded, but could not be saved locally.",
-        );
-      }
-
-      cursor.nextPage = page + 1;
-      cursor.hasMore =
-        results.length === PAGE_SIZE &&
-        (data.numFound === undefined || page * PAGE_SIZE < data.numFound);
-      setHasMore(cursor.hasMore);
-    } catch (fetchError) {
-      if (requestRef.current.requestId === requestId) {
-        cursor.hasMore = false;
-        setHasMore(false);
-        setError(
-          fetchError instanceof Error
-            ? fetchError.message
-            : "Unable to load books.",
-        );
-      }
-    } finally {
-      if (requestRef.current.requestId === requestId) {
-        cursor.loading = false;
-        setIsLoading(false);
-      }
-    }
-  }, []);
-
-  const handleSearch = useCallback(
-    (searchQuery: string) => {
-      const trimmedQuery = searchQuery.trim();
-      if (trimmedQuery.length <= 3) {
-        return false;
-      }
-
-      const cachedBooks = readCachedBooks(trimmedQuery);
-      const cursor = requestRef.current;
-      cursor.requestId += 1;
-      cursor.query = trimmedQuery;
-      cursor.nextPage = cachedBooks
-        ? Math.floor(cachedBooks.length / PAGE_SIZE) + 1
-        : 1;
-      cursor.hasMore =
-        cachedBooks === null || cachedBooks.length % PAGE_SIZE === 0;
-      cursor.loading = false;
-
-      const favouriteKeys = new Set(favouritesRef.current.map((book) => book.key));
-      booksRef.current = (cachedBooks ?? []).map((book) => ({
-        ...book,
-        favourite: favouriteKeys.has(book.key),
-      }));
-      setBooks(booksRef.current);
-      setHasMore(cursor.hasMore);
-      setIsLoading(false);
-      setError(null);
-      scrollElement?.scrollTo({ top: 0 });
-      return true;
-    },
-    [scrollElement],
-  );
-
-  const getBookDetails = (book: Book) => {
-    navigate("/book-details", { state: { book } });
-  };
-
-  const isFavourites = category === "Favourites";
-
-  const baseBooks = isFavourites ? favouriteBooks : books;
-  const visibleBooks =
-    listTab === "books"
-      ? bookView === "all"
-        ? baseBooks
-        : isFavourites
-          ? collectionBooks.filter((book) =>
-              favouriteBooks.some((favourite) => favourite.key === book.key),
-            )
-          : collectionBooks
-      : [];
-  const canLoadMore =
-    listTab === "books" && bookView === "all" && !isFavourites && hasMore;
-  const rowCount = Math.max(
-    1,
-    Math.ceil((visibleBooks.length + (canLoadMore ? 1 : 0)) / columns),
-  );
-
-  const cellProps: BookGridCellProps = {
-    books: visibleBooks,
-    columns,
+  const [listTab, setListTab] = useState<ListTab>("books");
+  const [collectionTab, setCollectionTab] = useState<CollectionTab>("mine");
+  const {
+    bookView,
+    handleSearch,
     canLoadMore,
-    scrollRoot: gridElement,
-    coverHeight: Math.max(90, Math.min(270, Math.floor(gridHeight / 2) - 100)),
-    onLoadMore: loadNextPage,
-    onBookDetails: getBookDetails,
-  };
+    rowCount,
+    isLoading,
+    error,
+    gridHeight,
+    listElement,
+    retryLoad,
+    setGridRef,
+    setHeaderElement,
+    setListElement,
+    cellProps,
+    visibleBooks,
+    columns,
+  } = useBookFeed({ category, listTab, scrollElement, collectionBooks });
+
   const showingCollections = listTab === "collections";
+  const isFavourites = category === "Favourites";
   const pageTitle = showingCollections
     ? "Collections"
     : isFavourites
@@ -264,6 +72,7 @@ const BookList = ({
         ? savedCollectionCards
         : browseCollections;
   const displayedCollectionCount = displayedCollections.length;
+
 
   return (
     <section className="book-list-page" aria-labelledby="book-list-title">
@@ -322,7 +131,11 @@ const BookList = ({
           </span>
         </div>
         <div className="book-list-view-controls">
-          <div className="book-list-tabs" role="tablist" aria-label="Books and collections">
+          <div
+            className="book-list-tabs"
+            role="tablist"
+            aria-label="Books and collections"
+          >
             {(["books", "collections"] as const).map((tab) => (
               <button
                 key={tab}
@@ -356,9 +169,7 @@ const BookList = ({
                 </button>
               ))}
             </div>
-          ) : (
-            null
-          )}
+          ) : null}
         </div>
       </header>
 
@@ -422,7 +233,10 @@ const BookList = ({
               aria-labelledby="saved-collections-title"
             >
               <div className="book-collection-folder-header">
-                <span className="book-collection-folder-icon" aria-hidden="true">
+                <span
+                  className="book-collection-folder-icon"
+                  aria-hidden="true"
+                >
                   ▤
                 </span>
                 <h2 id="saved-collections-title">Saved Collections</h2>
@@ -547,11 +361,7 @@ const BookList = ({
           <p>{error}</p>
           <button
             type="button"
-            onClick={() => {
-              requestRef.current.hasMore = true;
-              setHasMore(true);
-              setError(null);
-            }}
+            onClick={retryLoad}
           >
             Try again
           </button>
