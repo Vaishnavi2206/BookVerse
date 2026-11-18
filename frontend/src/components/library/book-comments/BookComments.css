@@ -1,0 +1,346 @@
+.book-comments {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin: 28px 0 8px;
+  padding-top: 22px;
+  border-top: 1px solid #e8e3f0;
+}
+
+.book-comments-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.book-comments-eyebrow {
+  margin: 0 0 4px;
+  color: #806a9d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.book-comments-heading h3 {
+  margin: 0;
+  color: #2b2540;
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+
+.book-comments-sort select {
+  max-width: 140px;
+  padding: 7px 26px 7px 9px;
+  border: 1px solid #ddd5e8;
+  border-radius: 8px;
+  background: #fff;
+  color: #514762;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.book-comments-sync-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid #e8dff1;
+  border-radius: 9px;
+  background: #faf7fd;
+  color: #5c4a73;
+  font-size: 0.8rem;
+}
+
+.book-comments-error {
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 8px;
+  background: #fff6f5;
+  color: #a33429;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.book-comment-composer {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.book-comment-avatar {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  place-items: center;
+  border-radius: 50%;
+  background: #efe8f6;
+  color: #594474;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.book-comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.book-comment-composer-content,
+.book-comment-reply-composer,
+.book-comment-edit {
+  display: grid;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+}
+
+.book-comment-composer textarea,
+.book-comment-reply-composer textarea,
+.book-comment-edit textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 72px;
+  padding: 10px 12px;
+  border: 1px solid #ded8e8;
+  border-radius: 9px;
+  background: #fff;
+  color: #302b3d;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.book-comment-composer textarea:focus,
+.book-comment-reply-composer textarea:focus,
+.book-comment-edit textarea:focus,
+.book-comments-sort select:focus-visible {
+  outline: 3px solid rgb(128 106 157 / 18%);
+  border-color: #9c84b8;
+}
+
+.book-comment-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  color: #897f97;
+  font-size: 0.72rem;
+}
+
+.book-comment-editor-actions > span {
+  margin-right: auto;
+}
+
+.book-comment-primary-button {
+  min-height: 34px;
+  padding: 7px 13px;
+  border: 0;
+  border-radius: 8px;
+  background: #5e4b7e;
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.book-comment-primary-button:hover:not(:disabled) {
+  background: #4b3b66;
+}
+
+.book-comment-primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.book-comment-text-button {
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #6a5687;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.book-comment-text-button:hover:not(:disabled) {
+  color: #3f3058;
+  text-decoration: underline;
+}
+
+.book-comment-text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.book-comment-delete-button {
+  color: #9c5049;
+}
+
+.book-comments-list {
+  display: grid;
+  gap: 16px;
+}
+
+.book-comment-thread {
+  min-width: 0;
+}
+
+.book-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+  margin-top: 12px;
+}
+
+.book-comment-thread > .book-comment {
+  margin-top: 0;
+}
+
+.book-comment-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 9px;
+  min-height: 20px;
+  color: #8a8195;
+  font-size: 0.72rem;
+}
+
+.book-comment-meta strong {
+  color: #332c43;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.book-comment-meta time {
+  white-space: nowrap;
+}
+
+.book-comment-sync {
+  color: #8a6c45;
+  font-size: 0.68rem;
+}
+
+.book-comment-sync.syncing {
+  color: #4f6788;
+}
+
+.book-comment-body {
+  margin: 4px 0 3px;
+  color: #433c4d;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.book-comment-deleted {
+  margin: 4px 0 3px;
+  color: #8a8195;
+  font-size: 0.84rem;
+  font-style: italic;
+}
+
+.book-comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.book-comment-reply-composer {
+  margin-top: 10px;
+}
+
+.book-comment-reply-composer > span {
+  color: #82768f;
+  font-size: 0.75rem;
+}
+
+.book-comment-thread-toggle {
+  margin: 10px 0 0 43px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #6a5687;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.book-comment-thread-toggle:hover:not(:disabled),
+.book-comments-load-more:hover:not(:disabled) {
+  color: #3f3058;
+  text-decoration: underline;
+}
+
+.book-comment-thread-toggle:disabled,
+.book-comments-load-more:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.book-comments-empty,
+.book-comments-sign-in {
+  margin: 0;
+  color: #81778e;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.book-comments-load-more {
+  justify-self: center;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  color: #6a5687;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+@media (max-width: 520px) {
+  .book-comments-heading {
+    align-items: center;
+  }
+
+  .book-comments-sync-notice {
+    align-items: flex-start;
+  }
+
+  .book-comment-avatar {
+    flex-basis: 30px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .book-comment-thread-toggle {
+    margin-left: 39px;
+  }
+
+}

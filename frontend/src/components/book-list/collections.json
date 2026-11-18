@@ -1,0 +1,35 @@
+[
+  {
+    "id": "sample-private-reading-list",
+    "name": "Quiet weekend reads",
+    "description": "A sample private board for books you want to keep to yourself.",
+    "owner": "You",
+    "isPublic": false,
+    "bookTitles": ["The Secret Garden", "A Man Called Ove"],
+    "isSample": true
+  },
+  {
+    "id": "sample-public-thrillers",
+    "name": "Page-turning thrillers",
+    "description": "Mysteries and suspense shared by the Book Verse community.",
+    "owner": "Maya R.",
+    "isPublic": true,
+    "bookTitles": ["Gone Girl", "The Silent Patient", "The Guest List"]
+  },
+  {
+    "id": "sample-public-spiritual",
+    "name": "Mindful reading",
+    "description": "Thoughtful reads on reflection, purpose, and personal growth.",
+    "owner": "Jordan L.",
+    "isPublic": true,
+    "bookTitles": ["The Alchemist", "Siddhartha", "The Power of Now"]
+  },
+  {
+    "id": "sample-public-romance",
+    "name": "Modern romance",
+    "description": "Warm, character-driven stories to fall into.",
+    "owner": "Priya S.",
+    "isPublic": true,
+    "bookTitles": ["Book Lovers", "The Seven Year Slip", "Beach Read"]
+  }
+]

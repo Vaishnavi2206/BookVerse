@@ -1,0 +1,26 @@
+.input-primary {
+  border: 1.5px solid #d8cde9;
+  border-radius: 14px;
+  padding: 10px;
+  width: 300px;
+  margin: 10px 0;
+  outline: none;
+  color: #262342;
+  font-family: var(--font-display);
+  font-size: 0.94rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 14px rgb(75 53 119 / 5%);
+}
+
+.input-primary::placeholder {
+  color: #91859f;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.input-primary:focus-visible {
+  outline: 3px solid rgb(128 101 233 / 22%);
+  outline-offset: 2px;
+  border-color: var(--color-lilac);
+}
