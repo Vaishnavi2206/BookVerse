@@ -220,7 +220,6 @@ export default function CommentCard({
         {expandedRoots.has(comment.rootId) &&
           children.map((child) => (
             <CommentCard
-              key={child.id}
               comment={child}
               depth={depth + 1}
               {...sharedProps}

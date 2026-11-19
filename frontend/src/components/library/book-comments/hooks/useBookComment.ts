@@ -26,7 +26,7 @@ import {
 
 type CommentStatus = CommentView["syncStatus"];
 
-const SYNC_THRESHOLD = 5;
+const syncthres = 5;
 const SYNC_DELAY_MS = 15_000;
 const SYNC_BATCH_SIZE = 10;
 
@@ -301,11 +301,11 @@ const [mutatingCommentId, setMutatingCommentId] = useState<string | null>(
 
   useEffect(() => {
     flushRef.current = flushComments;
-  }, [flushComments]);
+  }, []);
 
   useEffect(() => {
     pendingCountRef.current = pendingMutations.length;
-  }, [pendingMutations]);
+  }, []);
 
   useEffect(
     () => () => {
@@ -346,7 +346,7 @@ const [mutatingCommentId, setMutatingCommentId] = useState<string | null>(
       ...pendingMutations.map((mutation) => Date.parse(mutation.queuedAt)),
     );
     const thresholdAt =
-      pendingMutations.length >= SYNC_THRESHOLD
+      pendingMutations.length >= syncthres
         ? Date.now()
         : oldestQueuedAt + SYNC_DELAY_MS;
     const nextAttemptAt = Math.max(thresholdAt, retryAt);
@@ -401,7 +401,7 @@ const [mutatingCommentId, setMutatingCommentId] = useState<string | null>(
       pendingCountRef.current = queue.length;
       setComments((previous) => applyCurrentMutations(previous, queue));
       setOutboxError(null);
-      if (queue.length >= SYNC_THRESHOLD) {
+      if (queue.length >= syncthres) {
         void flushRef.current(false);
       }
       return true;
