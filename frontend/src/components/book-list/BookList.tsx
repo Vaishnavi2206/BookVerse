@@ -40,7 +40,24 @@ const BookList = ({
 
   const [listTab, setListTab] = useState<ListTab>("books");
   const [collectionTab, setCollectionTab] = useState<CollectionTab>("mine");
-  const {
+
+
+  const showingCollections = listTab === "collections";
+  const isFavourites = category === "Favourites";
+  const pageTitle = showingCollections
+    ? "Collections"
+    : isFavourites
+      ? "Your favourites"
+      : "Discover books";
+  const displayedCollections =
+    collectionTab === "mine"
+      ? userCollections
+      : collectionTab === "saved"
+        ? savedCollectionCards
+        : browseCollections;
+  const displayedCollectionCount = displayedCollections.length;
+
+    const {
     bookView,
     handleSearch,
     canLoadMore,
@@ -57,21 +74,6 @@ const BookList = ({
     visibleBooks,
     columns,
   } = useBookFeed({ category, listTab, scrollElement, collectionBooks });
-
-  const showingCollections = listTab === "collections";
-  const isFavourites = category === "Favourites";
-  const pageTitle = showingCollections
-    ? "Collections"
-    : isFavourites
-      ? "Your favourites"
-      : "Discover books";
-  const displayedCollections =
-    collectionTab === "mine"
-      ? userCollections
-      : collectionTab === "saved"
-        ? savedCollectionCards
-        : browseCollections;
-  const displayedCollectionCount = displayedCollections.length;
 
 
   return (
