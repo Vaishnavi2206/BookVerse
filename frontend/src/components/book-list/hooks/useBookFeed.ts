@@ -17,7 +17,7 @@ import {
   getFavouriteBooks,
   isBook,
   readCachedBooks,
-} from "../book-list.utlis";
+} from "../book-list.utils";
 
 const PAGE_SIZE = 10;
 

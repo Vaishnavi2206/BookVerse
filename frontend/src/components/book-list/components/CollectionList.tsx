@@ -1,6 +1,6 @@
 import type { AuthUser } from "../../../context/AuthContext";
 import type { Collection, CollectionBook } from "../book-types";
-import { CollectionBookCover } from "../book-list.utlis";
+import { CollectionBookCover } from "../book-list.utils";
 
 type CollectionListProps = {
   activeCollection: Collection;

@@ -1,6 +1,6 @@
 import type { Collection } from "../book-types";
 import type { CollectionBook } from "../book-types";
-import { CollectionBookCover } from "../book-list.utlis";
+import { CollectionBookCover } from "../book-list.utils";
 
 type CollectionCardProps = {
   collection: Collection;

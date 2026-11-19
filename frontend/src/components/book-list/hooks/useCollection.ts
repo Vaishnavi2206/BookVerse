@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { useLibraryState } from "../../../shared/library-state";
 import { useAuth } from "../../../context/AuthContext";
 import type { AuthUser } from "../../../context/AuthContext";
-import { toBook } from "../book-list.utlis";
+import { toBook } from "../book-list.utils";
 import type { Collection, CollectionBook } from "../book-types";
 import {
   removeBookFromCollection,
